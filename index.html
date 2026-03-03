@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Image Detector</title>
+    <style>
+        .drop-zone { width: 300px; height: 200px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <h1>AI Image Detector</h1>
+    <div class="drop-zone" id="dropZone">Click or Drop Image Here</div>
+    <input type="file" id="fileInput" hidden>
+    <h2 id="result"></h2>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.onclick = () => fileInput.click();
+
+        fileInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            document.getElementById('result').innerText = "Analyzing...";
+
+            const response = await fetch('http://localhost:5000/detect', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            document.getElementById('result').innerText = `Result: ${data.label} (${(data.confidence * 100).toFixed(2)}%)`;
+        };
+    </script>
+</body>
+</html>
